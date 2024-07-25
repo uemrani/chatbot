@@ -1,0 +1,12 @@
+
+
+streamlit run streamlit_app.py - um es auszuführen
+pip install -r requirements.txt - um diese requirments runter zu laden
+pip import streamlit openai oder openai streamlit kp muss auch noch gemacht werden. 
+
+wenn man vorlage nimmt wurden rquirments schon importiert wenn man aber was ergänzt muss es wieder neu gemacht werden
+
+hintergrudbild: https://de.freepik.com/vektoren-kostenlos/handgemalter-aquarell-abstrakter-aquarellhintergrund_15592661.htm#query=hintergrund&position=17&from_view=keyword&track=ais_user&uuid=28e9da81-75a0-4efa-847a-449173e37a2f#position=17&query=hintergrund
+
+hier erklärt der so ein paar sachen die man benutzen kann für bachelor, um das ganze prinzip dahinter eventuell zu erklären
+https://github.com/panaverse/learn-generative-ai - hier ist auch eine Auflistung aller Bücher
