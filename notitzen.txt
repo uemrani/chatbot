@@ -10,3 +10,6 @@ hintergrudbild: https://de.freepik.com/vektoren-kostenlos/handgemalter-aquarell-
 
 hier erklärt der so ein paar sachen die man benutzen kann für bachelor, um das ganze prinzip dahinter eventuell zu erklären
 https://github.com/panaverse/learn-generative-ai - hier ist auch eine Auflistung aller Bücher
+
+hier erklärt jmd den zsmhang seiner einzlnen bereiche in einem schaubild mega gut auch sowas in die bachelor rein:
+https://github.com/redis-developer/ArXivChatGuru/blob/main/app/assets/diagram.png#gh-light-mode-only

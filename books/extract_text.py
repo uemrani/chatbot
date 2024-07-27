@@ -25,8 +25,11 @@ if __name__ == "__main__":
 
     # Verarbeite jede PDF-Datei
     for pdf_path in pdf_paths:
-        # Erstelle den Namen für die Ausgabedatei
-        output_file = os.path.splitext(os.path.basename(pdf_path))[0] + "_auszug.txt"
-        extracted_text = extract_text_from_pdf(pdf_path)
-        save_text_to_file(extracted_text, output_file)
-        print(f"Text wurde erfolgreich extrahiert und in '{output_file}' gespeichert.")
+        if os.path.exists(pdf_path):
+            # Erstelle den Namen für die Ausgabedatei
+            output_file = os.path.join("books", os.path.splitext(os.path.basename(pdf_path))[0] + "_auszug.txt")
+            extracted_text = extract_text_from_pdf(pdf_path)
+            save_text_to_file(extracted_text, output_file)
+            print(f"Text wurde erfolgreich extrahiert und in '{output_file}' gespeichert.")
+        else:
+            print(f"Die Datei {pdf_path} existiert nicht. Bitte überprüfen Sie den Pfad.")

@@ -1,6 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 import base64
+from database import connect, fetch_books
 
 # Funktion zum Laden eines Bildes und Umwandeln in Base64
 def image_to_base64(image_path):
@@ -233,3 +234,16 @@ with chat_input_container:
 
 # Ensure the chat input field is focused on load
 st.markdown("<script>document.getElementById('chat_input').focus();</script>", unsafe_allow_html=True)
+
+# Fetch and display data from the database
+conn = connect()
+if conn:
+    books = fetch_books(conn)
+    if books:
+        st.write("Books from database:")
+        for book in books:
+            st.write(f"Title: {book[0]}, Section: {book[1]}, Page: {book[2]}, Content: {book[3]}, Keywords: {book[4]}")
+    else:
+        st.write("No books found in the database.")
+else:
+    st.write("Failed to connect to the database.")
