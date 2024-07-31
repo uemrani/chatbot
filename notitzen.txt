@@ -13,3 +13,20 @@ https://github.com/panaverse/learn-generative-ai - hier ist auch eine Auflistung
 
 hier erklärt jmd den zsmhang seiner einzlnen bereiche in einem schaubild mega gut auch sowas in die bachelor rein:
 https://github.com/redis-developer/ArXivChatGuru/blob/main/app/assets/diagram.png#gh-light-mode-only
+
+llama index wird hier erklärt kann das bei erklären nehmen
+https://blog.streamlit.io/build-a-chatbot-with-custom-data-sources-powered-by-llamaindex/
+
+und dann sagen warum ich dass statt einer datenbank genommen habe
+
+
+Zusammenfassung
+Embeddings-Kosten: Einmalige Kosten für das Erstellen von Embeddings.
+Nutzungskosten: Kosten pro Anfrage für die Nutzung der API.
+Optimierung: Persistentes Speichern des Index kann helfen, wiederholte Kosten zu vermeiden.
+
+wie streamlit gui aufgebaut ist wird hier gezeigt:
+https://github.com/redis-developer/ArXivChatGuru/blob/main/README.md
+hab halt nur kein longchain bzw stand ende july
+
+https://github.com/tomasonjo/llm-movieagent/blob/main/README.md

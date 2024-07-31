@@ -1,5 +1,5 @@
 import streamlit as st
-from scripts import chatbot  # Beispiel für Import
+from . import chatbot  # Beispiel für Import
 
 def main():
     st.title("Hauptseite")
