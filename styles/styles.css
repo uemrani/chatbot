@@ -1,0 +1,118 @@
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: black;
+    background-size: cover; /* Anpassung der Größe des Hintergrundbildes */
+    background-position: center; /* Zentrieren des Hintergrundbildes */
+  }
+  
+  
+  #myVideo {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    background-size: cover;
+  }
+  
+  #myImage {
+    display: none; /* Initially hidden */
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    background-color: black;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: transparent; /* Macht die Navbar transparent */
+    padding: 10px 20px;
+    margin-top: 60px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  .navbar .logo {
+    width: 80px;
+  }
+  
+  .navbar div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-grow: 1;
+    margin-right: 120px;
+  }
+  
+  .navbar a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: white; /* Textfarbe auf weiß ändern für bessere Lesbarkeit */
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .navbar a:hover {
+    color: #ddd; /* Leichtes Farbveränderung bei Hover für Feedback */
+  }
+  
+  .footer {
+    color: white; /* Textfarbe der Fußzeile auf weiß ändern */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: transparent;
+    text-align: center;
+    padding: 10px;
+    box-shadow: 0 -4px 2px -2px gray;
+    z-index: 1000;
+  }
+  
+  .center-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 220px);
+    color: white; /* Textfarbe der Inhalte auf weiß ändern */
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: white;
+    background-color: transparent; /* Macht den Button durchsichtig */
+    border: 2px solid white; /* Weißer Rand für Sichtbarkeit */
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Leichter weißer Hintergrund beim Hover */
+    color: white; /* Textfarbe beibehalten */
+    border-color: #ddd; /* Randfarbe ändern beim Hover */
+  }
+  

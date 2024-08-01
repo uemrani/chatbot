@@ -2,175 +2,125 @@ import streamlit as st
 import openai
 import os
 import pickle
-import faiss
-import redis
-import numpy as np
-from langchain.prompts.chat import ChatPromptTemplate
-from langchain_openai.embeddings import OpenAIEmbeddings
-from langchain_openai.chat_models import ChatOpenAI
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-from langchain.memory import ConversationBufferMemory
-from langchain_core.messages import HumanMessage, SystemMessage
+from llama_index.llms.openai import OpenAI
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from style import get_css, user_avatar, bot_avatar
 
-# Streamlit configuration
-st.set_page_config(page_title="Chatbot mit LangChain", page_icon="💬", layout="centered")
+st.set_page_config(
+    page_title="Chatbot mit LlamaIndex",
+    page_icon="💬",
+    layout="centered",
+    initial_sidebar_state="auto"
+)
+openai.api_key = st.secrets.get("openai", {}).get("openai_api_key")
 st.title("Chatbot 💬")
 st.info("Frage mich etwas über die Inhalte der Bücher.", icon="📚")
+st.markdown(get_css(), unsafe_allow_html=True)
 
-# API key from OpenAI
-openai_api_key = st.secrets.get("openai", {}).get("openai_api_key")
-if openai_api_key is None:
-    st.error("OPENAI_API_KEY nicht gefunden. Bitte setzen Sie den API-Schlüssel in den Streamlit Secrets.")
-    st.stop()
-
-openai.api_key = openai_api_key
-
-# Session initialization
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "Frage mich etwas über die Inhalte der Bücher."}
-    ]
+    st.session_state.messages = [{"role": "assistant", "content": "Frage mich etwas über die Inhalte der Bücher."}]
 
-# Redis configuration (Optional, if needed)
-redis_conn = redis.Redis(host='localhost', port=6379, db=0)
+# PDF-Pfade zu den einzelnen Dokumenten
+pdf_paths = [
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\ACT100.23.EN-US.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\ACT200.23.EN-US.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\Result_ERP1.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\Result_ERP2.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\Result_ERP3.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\Result_ERP4.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\Result_ERP5.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\Result_ERP6.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\Result_ERP7.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\Result_ERP8.pdf",
+    r"C:\Users\602648\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\Bachelor\books - for code\Result_ERPPREP_TS_2024_05_17.pdf"
+]
 
-# Function to read file with multiple encodings
-def read_file_with_encodings(file_path, encodings=["utf-8", "latin-1", "iso-8859-1"]):
-    for encoding in encodings:
-        try:
-            with open(file_path, "r", encoding=encoding) as file:
-                return file.read()
-        except UnicodeDecodeError:
-            pass
-    raise UnicodeDecodeError(f"Cannot read file {file_path} with given encodings.")
-
-# Loading data from local directory
 @st.cache_resource(show_spinner=False)
 def load_data():
-    local_directory = "C:\\Users\\602648\\OneDrive - BildungsCentrum der Wirtschaft gemeinnützige Gesellschaft mbH\\Bachelor\\books - for code"
-    documents = []
+    index_path = "index.pkl"
+    reader = SimpleDirectoryReader(input_files=pdf_paths)
+    docs = reader.load_data()
 
-    for filename in os.listdir(local_directory):
-        if filename.endswith(".txt") or filename.endswith(".pdf"):  # Adjust as needed for your file types
-            file_path = os.path.join(local_directory, filename)
-            text = read_file_with_encodings(file_path)
-            documents.append({"page_content": text})
+    if os.path.exists(index_path):
+        with open(index_path, "rb") as f:
+            index = pickle.load(f)
+    else:
+        Settings.llm = OpenAI(
+            model="gpt-3.5-turbo",
+            temperature=0.1,
+            system_prompt=(
+                "You are an SAP consultant with over 15 years of experience and specialize in accessing and analyzing "
+                "SAP Activate certification data, question catalogs, and related eBooks to answer user queries efficiently "
+                "and accurately. You provide short, data-driven responses based on the information retrieved from SAP Activate "
+                "certification PDFs, eBooks, and question catalogs. Clarify any ambiguous requests to ensure precise answers. "
+                "Maintain focus on delivering clear and concise information from the SAP Activate certification data. "
+                "All responses must include the page number and the book or document from which the information is sourced so that "
+                "users can verify in their own books or documents. The primary sources of information are the uploaded eBooks: "
+                "ACT200.23.EN-US.pdf, ACT100.23.EN-US.pdf, and the question catalogs Result_ERPPREP_TS_2024_05_17.pdf, Result_ERP1.pdf, "
+                "Result_ERP2.pdf, Result_ERP3.pdf, Result_ERP4.pdf, Result_ERP5.pdf, Result_ERP6.pdf, Result_ERP7.pdf, and Result_ERP8.pdf."
+            ),
+        )
 
-    if not documents:
-        st.error("Keine Dokumente im angegebenen Verzeichnis gefunden.")
-        return None, None
+        index = VectorStoreIndex.from_documents(docs)
+        with open(index_path, "wb") as f:
+            pickle.dump(index, f)
+    return index, docs
 
-    # Splitting documents into chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
-    split_documents = []
-    for doc in documents:
-        split_texts = text_splitter.split_text(doc["page_content"])
-        split_documents.extend([{"page_content": text} for text in split_texts])
+def display_sample_docs(docs, num_samples=5):
+    for i, doc in enumerate(docs[:num_samples]):
+        st.write(f"### Dokument {i + 1}")
+        st.write(f"**Pfad:** {pdf_paths[i]}")
+        st.write(f"**Inhalt (Auszug):** {doc.text[:500]}...")  # Zeige die ersten 500 Zeichen des Dokuments an
+        st.write("---")
 
-    # Embeddings and FAISS Index creation
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
-    document_texts = [doc["page_content"] for doc in split_documents]
-    document_embeddings = [embeddings.embed_query(text) for text in document_texts]
+index, documents = load_data()
 
-    dimension = len(document_embeddings[0])
-    index = faiss.IndexFlatL2(dimension)
-    index.add(np.array(document_embeddings))
+if st.button("Zeige Beispiel-Dokumente"):
+    display_sample_docs(documents)
+else:
+    st.write("Klicke auf den Button, um einige Beispiel-Dokumente anzuzeigen.")
 
-    vector_store = FAISS(
-        embedding_function=embeddings,
-        index=index,
-        docstore=None,  # Add appropriate docstore here
-        index_to_docstore_id={i: i for i in range(len(split_documents))}
-    )
-    
-    return vector_store, split_documents
-
-vector_store, documents = load_data()
-if vector_store is None or documents is None:
-    st.stop()
-
-# Additional check
-if vector_store.index_to_docstore_id is None:
-    st.error("index_to_docstore_id is not initialized correctly.")
-    st.stop()
-
-# Initialize LLM
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, openai_api_key=openai_api_key)
-
-# Initialize memory tool
-memory = ConversationBufferMemory()
-
-# Define system prompt
-system_prompt = """
-You are an SAP consultant with over 15 years of experience and an expert in your field. 
-You are very knowledgeable about SAP Activate and the related books. 
-You are friendly and helpful. Answer technical questions based on the contents of the books provided, 
-and feel free to engage in small talk as well.
-"""
-
-# Create prompt template
-prompt_template = ChatPromptTemplate.from_messages([
-    SystemMessage(content=system_prompt),
-    HumanMessage(content="{context}\n\n{question}")
-])
-
-# Create retriever
-retriever = vector_store.as_retriever()
-
-# Define retrieval chain creation function
-def create_retrieval_chain(query):
-    try:
-        retrieved_docs = retriever.get_relevant_documents(query)
-        if not retrieved_docs:
-            st.error("No documents found for the given query.")
-            return {"text": "Sorry, I couldn't find any relevant documents."}
-        
-        # Ensure that each retrieved document has the attribute 'page_content'
-        context = "\n\n".join([doc["page_content"] for doc in retrieved_docs])
-        
-        # Format messages using the context and query
-        formatted_messages = prompt_template.format_messages(context=context, question=query)
-        
-        # Ensure formatted_messages is a list of BaseMessage
-        if not isinstance(formatted_messages, list):
-            raise ValueError("Formatted messages should be a list of BaseMessage objects")
-        
-        # Get response from the language model
-        response = llm(formatted_messages)
-        return response
-    except Exception as e:
-        st.error(f"Error in create_retrieval_chain: {e}")
-        return {"text": "An error occurred while processing your request."}
-
-# Initialize chat engine
 if "chat_engine" not in st.session_state:
-    st.session_state.chat_engine = create_retrieval_chain
+    st.session_state.chat_engine = index.as_chat_engine(
+        chat_mode="condense_question", verbose=True, streaming=True
+    )
 
-# User query
 if prompt := st.chat_input("Ask a question"):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Add assistant response
-    response = st.session_state.chat_engine(prompt)
-    if response and hasattr(response, "choices") and response.choices:
-        response_content = response.choices[0].text
-    else:
-        response_content = "An error occurred while processing your request."
+    response_stream = st.session_state.chat_engine.stream_chat(prompt)
+    response_content = ''.join(chunk for chunk in response_stream.response_gen)
     st.session_state.messages.append({"role": "assistant", "content": response_content})
 
-# Display messages
+    st.markdown(
+        f"""
+        <div style="display: flex; align-items: flex-start; justify-content: flex-start; margin-bottom: 10px;">
+            <img src="data:image/jpeg;base64,{bot_avatar}" width="40" style="border-radius: 50%; margin-right: 10px;">
+            <div style="background: #f1f1f1; color: black; padding: 10px; border-radius: 10px; max-width: 70%;">
+                {response_content}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    if hasattr(response_stream, 'source_documents'):
+        st.write("### Quellenangaben:")
+        for doc in response_stream.source_documents:
+            st.write(f"**Dokument:** {doc.title}")
+            st.write(f"**Seite:** {doc.page_number}")
+            st.write(f"**Auszug:** {doc.text[:200]}...")
+            st.write("---")
+
 for message in st.session_state.messages:
     avatar = user_avatar if message["role"] == "user" else bot_avatar
     alignment = "flex-end" if message["role"] == "user" else "flex-start"
     background_color = "#ADD8E6" if message["role"] == "user" else "#f1f1f1"
-    text_color = "black"
     st.markdown(
         f"""
         <div style="display: flex; align-items: flex-start; justify-content: {alignment}; margin-bottom: 10px;">
-            <img src="{avatar}" width="40" style="border-radius: 50%; margin-right: 10px;">
-            <div style="background: {background_color}; color: {text_color}; padding: 10px; border-radius: 10px; max-width: 70%;">
+            <img src="data:image/jpeg;base64,{avatar}" width="40" style="border-radius: 50%; margin-right: 10px;">
+            <div style="background: {background_color}; color: black; padding: 10px; border-radius: 10px; max-width: 70%;">
                 {message["content"]}
             </div>
         </div>
