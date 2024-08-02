@@ -1,118 +1,295 @@
 body {
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: black;
-    background-size: cover; /* Anpassung der Größe des Hintergrundbildes */
-    background-position: center; /* Zentrieren des Hintergrundbildes */
-  }
-  
-  
-  #myVideo {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    z-index: -1;
-    background-size: cover;
-  }
-  
-  #myImage {
-    display: none; /* Initially hidden */
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    z-index: -1;
-    background-color: black;
-  }
-  
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: transparent; /* Macht die Navbar transparent */
-    padding: 10px 20px;
-    margin-top: 60px;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-  }
-  
-  .navbar .logo {
-    width: 80px;
-  }
-  
-  .navbar div {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-grow: 1;
-    margin-right: 120px;
-  }
-  
-  .navbar a {
-    margin: 0 10px;
-    text-decoration: none;
-    color: white; /* Textfarbe auf weiß ändern für bessere Lesbarkeit */
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s;
-  }
-  
-  .navbar a:hover {
-    color: #ddd; /* Leichtes Farbveränderung bei Hover für Feedback */
-  }
-  
-  .footer {
-    color: white; /* Textfarbe der Fußzeile auf weiß ändern */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: transparent;
-    text-align: center;
-    padding: 10px;
-    box-shadow: 0 -4px 2px -2px gray;
-    z-index: 1000;
-  }
-  
-  .center-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - 220px);
-    color: white; /* Textfarbe der Inhalte auf weiß ändern */
-    text-align: center;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-  
-  button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 18px;
-    color: white;
-    background-color: transparent; /* Macht den Button durchsichtig */
-    border: 2px solid white; /* Weißer Rand für Sichtbarkeit */
-    border-radius: 5px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-  }
-  
-  button:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Leichter weißer Hintergrund beim Hover */
-    color: white; /* Textfarbe beibehalten */
-    border-color: #ddd; /* Randfarbe ändern beim Hover */
-  }
-  
+  overflow: auto; /* Allows scrolling */
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: black;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 0.5s ease-in-out;
+}
+
+#myVideo,
+#myImage {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -1;
+}
+
+#myImage {
+  background-color: black;
+}
+
+.navbar {
+  display: flex;
+  justify-content: flex-start; /* Align items to the left */
+  align-items: center;
+  background-color: transparent;
+  padding: 10px 20px;
+  margin-top: 60px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-right: auto; /* Push the rest of the items to the right */
+}
+
+.logo {
+  width: 80px;
+  margin-right: 10px; /* Space between logo and text */
+}
+
+.logo-text {
+  font-size: 24px; /* Adjust the size as needed */
+  color: white; 
+  font-weight: bold;
+}
+
+.navbar div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-grow: 1;
+  margin-right: 120px;
+}
+
+.navbar a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.navbar a:hover {
+  color: #ddd;
+}
+
+
+.footer {
+  color: white;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: transparent;
+  text-align: center;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.logo {
+  width: 80px;
+  margin-right: 10px; /* Space between logo and text */
+}
+
+.logo-text {
+  font-size: 24px; /* Adjust the size as needed */
+  color: white; /* Match text color with the rest of the navbar */
+  font-weight: bold;
+}
+
+.footer a {
+  text-decoration: none;
+  color: white;
+}
+
+.center-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 220px);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.center-content h1 {
+  font-size: 55px;
+  margin-bottom: 10px;
+}
+
+.center-content p {
+  text-align: center;
+}
+
+.center-content p.sorry {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.center-content p.notice {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  color: white;
+  background-color: transparent;
+  border: 2px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-color: #ddd;
+}
+
+.about-container {
+  background-color: #ffffff;
+  padding: 96px 73px;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #1e1e1e;
+  text-align: center;
+}
+
+.about-title {
+  font-size: 64px;
+  font-weight: 700;
+  color: #2c60d1;
+  margin-bottom: 50px;
+}
+
+.about-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 80px;
+}
+
+.about-text-left,
+.about-text-right {
+  flex: 1;
+  text-align: left;
+  padding: 20px;
+}
+
+.about-image-right,
+.about-image-left {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.rectangle-12,
+.rectangle-13 {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+  width: 390.7px;
+  height: 273.8px;
+}
+
+.rectangle-12 {
+  background-image: url('imgs/rectangle_12.jpg'); /* Example image path */
+}
+
+.rectangle-13 {
+  background-image: url('imgs/rectangle_13.jpg'); /* Example image path */
+}
+
+.about-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.about-subtitle {
+  font-size: 48px;
+  font-weight: 500;
+  color: #141414;
+  margin-bottom: 30px;
+}
+
+.sub-title {
+  font-size: 25px;
+  font-weight: 700;
+  color: #2c60d1;
+  margin-bottom: 20px;
+}
+
+.about-text {
+  font-size: 24px;
+  line-height: 1.5;
+  margin-bottom: 40px;
+}
+
+.benefits-section {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.about-benefits-text {
+  font-size: 34px;
+  font-weight: 600;
+  margin-bottom: 60px;
+}
+
+.benefit-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.benefit-item {
+  background-color: #f7fdf9;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 300px;
+  text-align: left;
+}
+
+.benefit-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #141414;
+  margin-bottom: 10px;
+}
+
+.benefit-text {
+  font-size: 16px;
+  line-height: 1.625;
+}
+
+.card-number {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ellipse {
+  width: 54px;
+  height: 54px;
+  margin-right: 10px;
+}
+
+.container {
+  font-size: 34px;
+  color: #22b286;
+}
+

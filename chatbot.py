@@ -4,7 +4,7 @@ import os
 import pickle
 from llama_index.llms.openai import OpenAI
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
-from style import get_css, user_avatar, bot_avatar
+from styles.style import get_css, user_avatar, bot_avatar
 
 st.set_page_config(
     page_title="Chatbot mit LlamaIndex",
